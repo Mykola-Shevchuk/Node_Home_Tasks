@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson 2</title>
+    <script>
+      window.onload = () => {
+        const input = document.getElementById("inputField");
+        const output = document.getElementById("inputResponse");
+        const outputFiles = document.getElementById("inputResponseFiles");
+        const btn = document.getElementById("inputSubmit");
+        const getBtn = document.getElementById("getFiles");
+        let getValue = async function () {
+          fetch('http://localhost:8000/min', {
+            method: 'POST',
+            body: input.value
+          })
+            .then(data => data.json())
+            .then(data => output.innerText = data)
+            .catch(error => console.log(error));
+        };
+        btn.addEventListener('click', getValue);
+
+        let getAllFiles = async function () {
+          fetch('http://localhost:8000/files', {
+            method: 'GET'
+          })
+            .then(data => data.text())
+            .then(data =>outputFiles.innerText = data)
+            .catch(error => console.log(error));
+        };
+        getBtn.addEventListener('click', getAllFiles);
+      };
+    </script>
+</head>
+<body>
+    <h1>Lesson 2</h1>
+    <h3 style="margin-top: 50px">Get min number</h3>
+    <label for="inputField">Set your value</label>
+    <input id="inputField">
+    <button id="inputSubmit">Submit</button>
+    <h4>Result: <span id="inputResponse" style="color: red"></span></h4>
+
+    <h3 style="margin-top: 50px">Get all files</h3>
+    <button id="getFiles">Get files</button>
+    <div id="inputResponseFiles"></div>
+</body>
+</html>
