@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Блок 3</title>
+</head>
+<body>
+    <h1>Блок 3, 4</h1>
+
+    <h3>Get all users:</h3>
+    <button id="btn-users-list">Get users:</button>
+    <ul id="users-list"></ul>
+
+    <hr>
+
+    <h3>Add new user</h3>
+    <div>
+        <label for="name">Name</label>
+    </div>
+    <div>
+        <input type="text" id="name">
+    </div>
+    <div>
+        <label for="surname">Surname</label>
+    </div>
+    <div>
+        <input type="text" id="surname">
+    </div>
+    <div style="margin-top: 20px">
+        <button id="btn-add-user">Add user</button>
+    </div>
+    <p id="result-add-user"></p>
+
+    <hr>
+
+    <h3>Update user</h3>
+    <div>
+        <label for="id-user">User id</label>
+    </div>
+    <div>
+        <input type="text" id="id-user">
+    </div>
+    <div>
+        <label for="new-name">New name</label>
+    </div>
+    <div>
+        <input type="text" id="new-name">
+    </div>
+    <div>
+        <label for="new-surname">New surname</label>
+    </div>
+    <div>
+        <input type="text" id="new-surname">
+    </div>
+    <div style="margin-top: 20px">
+        <button id="btn-update-user">Update user</button>
+    </div>
+    <p id="result-update-user"></p>
+
+    <hr>
+
+    <h3>Delete user</h3>
+    <div>
+        <label for="id-user-delete">User id</label>
+    </div>
+    <div>
+        <input type="text" id="id-user-delete">
+    </div>
+
+    <div style="margin-top: 20px">
+        <button id="btn-delete-user">Delete user</button>
+    </div>
+    <p id="result-delete-user"></p>
+</body>
+<script>
+  const usersListNode = document.getElementById('users-list');
+  const usersListBtn = document.getElementById('btn-users-list');
+
+  const name = document.getElementById('name');
+  const surname = document.getElementById('surname');
+  const addUserBtn = document.getElementById('btn-add-user');
+  const addResult = document.getElementById('result-add-user');
+
+  const idUser = document.getElementById('id-user');
+  const newName = document.getElementById('new-name');
+  const newSurname = document.getElementById('new-surname');
+  const updateUserBtn = document.getElementById('btn-update-user');
+  const updateResult = document.getElementById('result-update-user');
+
+  const idDeleteUser = document.getElementById('id-user-delete');
+  const idDeleteBtn = document.getElementById('btn-delete-user');
+  const deleteUserResult = document.getElementById('result-delete-user');
+
+  const getAllUsers = () => {
+    fetch('/all-users')
+      .then((data) => data.json())
+      .then((data) => {
+        if (data.users.length) {
+          usersListNode.innerHTML = '';
+
+          data.users.forEach((item) => {
+            const li = document.createElement('li');
+
+            li.innerText = `id: ${item.id} --${item.name} ${item.surname}`;
+
+            usersListNode.appendChild(li);
+          })
+        }
+      })
+  };
+
+  const addNewUser = () => {
+    const user = {
+      name: name.value,
+      surname: surname.value,
+    };
+
+    fetch('/add-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        addResult.innerText = data.message;
+      })
+  };
+
+  const updateUser = () => {
+    const user = {
+      name: newName.value,
+      surname: newSurname.value,
+    };
+
+    fetch(`/update-user/${idUser.value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        updateResult.innerText = data.message;
+      })
+  };
+
+  const deleteUser = () => {
+    fetch(`/delete-user/${idDeleteUser.value}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        deleteUserResult.innerText = data.message;
+      })
+  };
+
+  usersListBtn.addEventListener('click', getAllUsers);
+  addUserBtn.addEventListener('click', addNewUser);
+  updateUserBtn.addEventListener('click', updateUser);
+  idDeleteBtn.addEventListener('click', deleteUser);
+</script>
+</html>
